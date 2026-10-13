@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Doggy Training">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Doggy Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Lexend:wght@400;600&display=swap">
+<style>
+/* Layout: one-screen kid app, big tap targets, fixed bottom tab bar (backyard-ball palette) */
+:root{
+  --bg:#eaf4ff; --card:#ffffff; --ink:#1d2b4f; --muted:#56668a;
+  --ball:#ff7a2f; --grass:#23a865; --sun:#ffcf33; --line:#cfe0f5;
+  --display:"Grandstander","Comic Sans MS","Chalkboard SE",system-ui,sans-serif;
+  --body:"Lexend",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111a2e; --card:#1b2541; --ink:#eef3ff; --muted:#a7b4d4;
+  --ball:#ff9455; --grass:#43c986; --sun:#ffd95e; --line:#2c3a60; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111a2e; --card:#1b2541; --ink:#eef3ff; --muted:#a7b4d4;
+  --ball:#ff9455; --grass:#43c986; --sun:#ffd95e; --line:#2c3a60; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:16px 120px;display:grid;gap:18px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:2.1rem}
+h2{font-size:1.6rem}
+h3{font-size:1.25rem}
+p{margin:0}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:18px;display:grid;gap:12px;min-width:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ball);outline-offset:2px}
+.btn{border:0;border-radius:999px;padding:12px 20px;font-family:var(--display);font-weight:800;font-size:1.1rem;background:var(--ball);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--ball) 60%,#000)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--ball) 60%,#000)}
+.btn.green{background:var(--grass);box-shadow:0 4px 0 color-mix(in srgb,var(--grass) 60%,#000)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.label{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+
+/* header */
+.top{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.top .dogsvg{width:96px;height:96px;flex:none}
+.top .t{min-width:0;flex:1}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
+.tabs button{background:none;border:0;border-radius:16px;padding:8px 4px;display:grid;justify-items:center;gap:2px;font-family:var(--display);font-weight:800;font-size:.95rem;color:var(--muted)}
+.tabs button svg{width:28px;height:28px}
+.tabs button[aria-selected=true]{color:var(--ink);background:color-mix(in srgb,var(--sun) 35%,transparent)}
+
+/* my dog */
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid var(--line)}
+.sw[aria-pressed=true]{border-color:var(--ink);transform:scale(1.1)}
+.breedpick{max-height:340px;overflow:auto;border:2px solid var(--line);border-radius:16px;padding:10px;display:grid;gap:12px;background:var(--bg)}
+.grp{display:grid;gap:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.92rem}
+.chip[aria-pressed=true]{background:var(--grass);border-color:var(--grass);color:#fff}
+.breedbox{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;background:color-mix(in srgb,var(--grass) 14%,transparent)}
+.breedbox b{font-family:var(--display);font-size:1.25rem}
+.clicker{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.clickbtn{width:110px;height:110px;border-radius:50%;border:0;background:var(--sun);color:#3b2a00;font-family:var(--display);font-weight:800;font-size:1.4rem;box-shadow:0 6px 0 color-mix(in srgb,var(--sun) 55%,#000)}
+.clickbtn:active{transform:translateY(5px);box-shadow:0 1px 0 color-mix(in srgb,var(--sun) 55%,#000)}
+.treats{font-family:var(--display);font-size:2.4rem;font-variant-numeric:tabular-nums}
+.totd{border-color:var(--sun);background:color-mix(in srgb,var(--sun) 16%,var(--card))}
+
+/* tricks */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.trick{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:6px;min-width:0}
+.trick:hover{border-color:var(--ball)}
+.lvl{justify-self:start;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 10px;border-radius:999px}
+.lvl.Easy{background:color-mix(in srgb,var(--grass) 22%,transparent)}
+.lvl.Medium{background:color-mix(in srgb,var(--sun) 40%,transparent)}
+.lvl.Tricky{background:color-mix(in srgb,var(--ball) 28%,transparent)}
+.stars{display:flex;gap:2px}
+.stars svg{width:22px;height:22px}
+.detail ol{margin:0;padding-left:1.4em;display:grid;gap:8px}
+.detail .tip{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--sun) 22%,transparent)}
+.detail .stars svg{width:40px;height:40px}
+.rules{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.rule{padding:12px;border-radius:16px;background:var(--bg);font-size:.95rem}
+.rule b{display:block;font-family:var(--display);font-size:1.05rem}
+
+/* stars page */
+.big{font-family:var(--display);font-size:3rem;line-height:1;font-variant-numeric:tabular-nums}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.badge{display:grid;justify-items:center;gap:6px;text-align:center;padding:12px 8px;border-radius:18px;background:var(--bg);font-size:.9rem}
+.badge .medal{width:64px;height:64px}
+.badge.locked{opacity:.45}
+.meter{height:18px;border-radius:999px;background:var(--bg);overflow:hidden;border:2px solid var(--line)}
+.meter i{display:block;height:100%;background:var(--grass);border-radius:999px;transition:width .4s}
+
+/* phones */
+.idtag{border:3px dashed var(--ball);background:color-mix(in srgb,var(--ball) 8%,var(--card))}
+.contacts{display:grid;gap:10px}
+.contact{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-radius:16px;background:var(--bg)}
+.contact .who{flex:1;min-width:0}
+.contact .who b{font-family:var(--display);font-size:1.15rem;display:block}
+.contact .num{font-size:1.25rem;font-variant-numeric:tabular-nums;user-select:all;letter-spacing:.02em}
+.small{font-size:.85rem}
+.form{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+@media (max-width:560px){.form{grid-template-columns:1fr}}
+
+/* confetti */
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
+.confetti i{position:absolute;top:-20px;width:12px;height:16px;border-radius:3px;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.toast{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-family:var(--display);font-weight:800;z-index:10;max-width:calc(100% - 32px);text-align:center}
+.wag{animation:wag .5s ease-in-out 2}
+@keyframes wag{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}.wag{animation:none}.meter i{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <svg class="dogsvg" id="headDog" viewBox="0 0 120 120" aria-hidden="true"></svg>
+    <div class="t">
+      <h1>Doggy Training</h1>
+      <p class="muted" id="hello">Teach your pup new tricks and earn stars!</p>
+    </div>
+  </header>
+
+  <!-- MY DOG -->
+  <section id="tab-dog" class="tabpanel" style="display:grid;gap:18px">
+    <div class="card totd" id="totd"></div>
+
+    <div class="card">
+      <h2>My dog</h2>
+      <div>
+        <label class="label" for="dogName">My dog's name</label>
+        <input type="text" id="dogName" placeholder="Type your dog's name" maxlength="24" autocomplete="off">
+      </div>
+      <div>
+        <div class="label">Fur color</div>
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>What breed is your dog?</h2>
+      <p class="muted">Tap your dog's breed. Can't find it? Pick <b>Mixed Breed</b>.</p>
+      <div class="breedbox" id="breedbox"></div>
+      <input type="search" id="breedSearch" placeholder="Search breeds, like Lab or Poodle" autocomplete="off">
+      <div class="breedpick" id="breedpick"></div>
+    </div>
+
+    <div class="card">
+      <h2>Clicker</h2>
+      <p class="muted">Dog trainers click the exact moment a dog does it right, then give a treat. Tap the button, then give your dog a treat!</p>
+      <div class="clicker">
+        <button class="clickbtn" id="clickBtn" aria-label="Click and treat">CLICK!</button>
+        <div>
+          <div class="label">Treats given</div>
+          <div class="treats" id="treatCount">0</div>
+          <button class="btn ghost small" id="treatReset" style="padding:6px 14px;font-size:.9rem">Start over</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRICKS -->
+  <section id="tab-tricks" class="tabpanel" hidden style="display:grid;gap:18px">
+    <div class="card" id="trickDetail" hidden></div>
+    <div class="card">
+      <h2>Trainer rules</h2>
+      <div class="rules">
+        <div class="rule"><b>Keep it short</b>5 minutes is plenty. Stop while it's still fun.</div>
+        <div class="rule"><b>Tiny treats</b>Pea-sized pieces. Ask a grown-up which treats are safe.</div>
+        <div class="rule"><b>Be kind</b>Never yell or push. Happy voices work best.</div>
+        <div class="rule"><b>Say it once</b>Say the word one time, then wait. No "sit sit sit!"</div>
+        <div class="rule"><b>Grown-up helper</b>Practice with a grown-up nearby, especially with leashes.</div>
+      </div>
+    </div>
+    <div>
+      <h2 style="margin-bottom:10px">Pick a trick</h2>
+      <div class="grid" id="trickGrid"></div>
+    </div>
+  </section>
+
+  <!-- STARS -->
+  <section id="tab-stars" class="tabpanel" hidden style="display:grid;gap:18px">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <div class="label">Total stars</div>
+          <div class="big" id="totalStars">0</div>
+        </div>
+        <div style="text-align:right">
+          <div class="label">Trainer level</div>
+          <h3 id="levelName">Puppy Pal</h3>
+        </div>
+      </div>
+      <div class="meter"><i id="meter" style="width:0"></i></div>
+      <p class="muted" id="levelNext"></p>
+    </div>
+    <div class="card">
+      <h2>Trick badges</h2>
+      <p class="muted">Practice a trick 5 times to win its badge.</p>
+      <div class="badges" id="badges"></div>
+    </div>
+    <div class="card">
+      <h3>Start fresh</h3>
+      <p class="muted">Clears all stars and badges.</p>
+      <div class="row" id="resetRow"><button class="btn ghost" id="resetStars">Clear all stars</button></div>
+    </div>
+  </section>
+
+  <!-- PHONES -->
+  <section id="tab-phone" class="tabpanel" hidden style="display:grid;gap:18px">
+    <div class="card idtag">
+      <div class="label">If you find this dog</div>
+      <h2 id="idName">Please call us!</h2>
+      <div class="contacts" id="idList"></div>
+    </div>
+    <div class="card">
+      <h2>Add a phone number</h2>
+      <div class="chips" id="whoChips"></div>
+      <div class="form">
+        <div><label class="label" for="cName">Who is it?</label><input type="text" id="cName" placeholder="Mom" maxlength="30"></div>
+        <div><label class="label" for="cNum">Phone number</label><input type="tel" id="cNum" placeholder="(863) 555-0123" maxlength="20" inputmode="tel"></div>
+      </div>
+      <div class="row"><button class="btn green" id="addContact">Add number</button><span class="muted small" id="addMsg"></span></div>
+      <p class="muted small">Numbers are saved on this iPad only.</p>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" data-tab="dog" aria-selected="true"><svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="6" cy="9" rx="2.2" ry="3"/><ellipse cx="18" cy="9" rx="2.2" ry="3"/><ellipse cx="9.5" cy="5" rx="2" ry="2.8"/><ellipse cx="14.5" cy="5" rx="2" ry="2.8"/><path d="M12 11c3.5 0 6 4.5 6 7 0 2-1.6 3-3.3 3-1 0-1.8-.6-2.7-.6s-1.7.6-2.7.6C7.6 21 6 20 6 18c0-2.5 2.5-7 6-7z"/></svg>My Dog</button>
+  <button role="tab" data-tab="tricks" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h9a5 5 0 0 1 5 5v11H8a4 4 0 0 1-4-4z"/><rect x="7" y="8" width="7" height="1.8" rx=".9" fill="var(--card)"/><rect x="7" y="12" width="5" height="1.8" rx=".9" fill="var(--card)"/></svg>Tricks</button>
+  <button role="tab" data-tab="stars" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>Stars</button>
+  <button role="tab" data-tab="phone" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 2.5l3 .6 1.4 4.3-2 1.6a12 12 0 0 0 6 6l1.6-2 4.3 1.4.6 3c.1.8-.5 1.6-1.3 1.7C10.6 19.8 4.2 13.4 3.4 4.1c0-.8.7-1.5 1.5-1.6z"/></svg>Phone</button>
+</nav>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{const v=localStorage.getItem('dt_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+             set(k,v){try{localStorage.setItem('dt_'+k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- data ---------- */
+const GROUPS={
+ "Not sure":{tip:"Every dog is special! Mixed breeds are often smart, healthy, and great learners.",list:["Mixed Breed"]},
+ "Sporting":{tip:"Sporting dogs love to fetch and swim. Use a ball or toy as a reward after a good trick!",list:["Labrador Retriever","Golden Retriever","Cocker Spaniel","English Cocker Spaniel","English Springer Spaniel","Welsh Springer Spaniel","Brittany","German Shorthaired Pointer","German Wirehaired Pointer","Pointer","Weimaraner","Vizsla","Wirehaired Vizsla","Irish Setter","English Setter","Gordon Setter","Irish Red and White Setter","Chesapeake Bay Retriever","Flat-Coated Retriever","Curly-Coated Retriever","Nova Scotia Duck Tolling Retriever","Boykin Spaniel","Clumber Spaniel","Field Spaniel","Sussex Spaniel","Irish Water Spaniel","American Water Spaniel","Lagotto Romagnolo","Spinone Italiano","Wirehaired Pointing Griffon"]},
+ "Hound":{tip:"Hounds follow their noses! Practice in a quiet room first, and use yummy treats to keep their attention.",list:["Beagle","Dachshund","Basset Hound","Bloodhound","Greyhound","Whippet","Afghan Hound","Basenji","Borzoi","Rhodesian Ridgeback","Black and Tan Coonhound","Bluetick Coonhound","Redbone Coonhound","Treeing Walker Coonhound","English Coonhound","Plott Hound","American Foxhound","English Foxhound","Harrier","Irish Wolfhound","Scottish Deerhound","Saluki","Sloughi","Azawakh","Norwegian Elkhound","Petit Basset Griffon Vendéen","Pharaoh Hound","Ibizan Hound","Otterhound","Portuguese Podengo"]},
+ "Working":{tip:"Working dogs are big, strong helpers. They love having a job, so give them lots of tricks to learn!",list:["Siberian Husky","Alaskan Malamute","Boxer","Rottweiler","Doberman Pinscher","Great Dane","Bernese Mountain Dog","Greater Swiss Mountain Dog","Saint Bernard","Newfoundland","Mastiff","Bullmastiff","Neapolitan Mastiff","Tibetan Mastiff","Cane Corso","Dogue de Bordeaux","Boerboel","Akita","Samoyed","Great Pyrenees","Anatolian Shepherd","Portuguese Water Dog","Giant Schnauzer","Standard Schnauzer","Leonberger","Komondor","Kuvasz","Black Russian Terrier","Chinook"]},
+ "Terrier":{tip:"Terriers are full of energy and a little stubborn. Keep lessons short, fast, and fun!",list:["Jack Russell Terrier","Parson Russell Terrier","West Highland White Terrier","Scottish Terrier","Airedale Terrier","Bull Terrier","Miniature Bull Terrier","Miniature Schnauzer","Staffordshire Bull Terrier","American Staffordshire Terrier","American Pit Bull Terrier","Cairn Terrier","Border Terrier","Soft Coated Wheaten Terrier","Rat Terrier","Wire Fox Terrier","Smooth Fox Terrier","Kerry Blue Terrier","Irish Terrier","Welsh Terrier","Bedlington Terrier","Norfolk Terrier","Norwich Terrier","Australian Terrier","Dandie Dinmont Terrier","Lakeland Terrier","Manchester Terrier","Skye Terrier","Sealyham Terrier","Glen of Imaal Terrier","Cesky Terrier","American Hairless Terrier"]},
+ "Toy":{tip:"Toy dogs are tiny! Kneel down to their level and use extra-small treats.",list:["Chihuahua","Pomeranian","Shih Tzu","Yorkshire Terrier","Maltese","Pug","Cavalier King Charles Spaniel","English Toy Spaniel","Papillon","Toy Poodle","Havanese","Miniature Pinscher","Italian Greyhound","Pekingese","Brussels Griffon","Japanese Chin","Chinese Crested","Affenpinscher","Toy Fox Terrier","Silky Terrier","Biewer Terrier","Russian Toy"]},
+ "Non-Sporting":{tip:"This group has all kinds of dogs! Watch what your dog loves most, treats, toys, or pets, and use that as a reward.",list:["Standard Poodle","Miniature Poodle","French Bulldog","Bulldog","Boston Terrier","Dalmatian","Bichon Frise","Shiba Inu","Chow Chow","Lhasa Apso","Chinese Shar-Pei","Keeshond","Schipperke","Tibetan Terrier","Tibetan Spaniel","American Eskimo Dog","Coton de Tulear","Löwchen","Finnish Spitz","Xoloitzcuintli","Norwegian Lundehund"]},
+ "Herding":{tip:"Herding dogs are super smart and learn fast. They need lots of exercise and new tricks so they don't get bored!",list:["German Shepherd","Border Collie","Australian Shepherd","Miniature American Shepherd","Pembroke Welsh Corgi","Cardigan Welsh Corgi","Shetland Sheepdog","Collie","Belgian Malinois","Belgian Tervuren","Belgian Sheepdog","Dutch Shepherd","Australian Cattle Dog","Old English Sheepdog","Bearded Collie","Briard","Bouvier des Flandres","Beauceron","Berger Picard","Puli","Mudi","Icelandic Sheepdog","Canaan Dog","Entlebucher Mountain Dog","Polish Lowland Sheepdog","Pyrenean Shepherd","Swedish Vallhund","Norwegian Buhund"]},
+ "Popular mixes":{tip:"Mixes get the best of both parents. Many 'doodles' are friendly people-pleasers who love to learn!",list:["Goldendoodle","Labradoodle","Bernedoodle","Aussiedoodle","Sheepadoodle","Cockapoo","Cavapoo","Maltipoo","Shih-Poo","Yorkipoo","Schnoodle","Puggle","Pomsky","Chiweenie","Morkie"]}
+};
+
+const TRICKS=[
+ {id:"name",name:"Name Game",lvl:"Easy",say:"Say your dog's name",blurb:"Teach your dog to look at you when you say its name.",
+  steps:["Hold a treat and wait in a quiet room.","Say your dog's name one time in a happy voice.","The second your dog looks at you, say \"Yes!\" and give the treat.","Do it 5 times, then try from a little farther away."],
+  tip:"Never use your dog's name when you're upset. The name should always mean good things!"},
+ {id:"sit",name:"Sit",lvl:"Easy",say:"\"Sit\"",blurb:"The first trick most dogs learn.",
+  steps:["Hold a treat right in front of your dog's nose.","Slowly move the treat up and back over its head.","As its nose goes up, its bottom goes down!","The moment its bottom touches the floor, say \"Yes!\" and give the treat.","After a few tries, say \"Sit\" right before you move your hand."],
+  tip:"Don't push your dog's bottom down. Let the treat do the work."},
+ {id:"down",name:"Down",lvl:"Easy",say:"\"Down\"",blurb:"Lie down nice and calm.",
+  steps:["Start with your dog sitting.","Hold a treat at its nose, then slowly move it straight down to the floor.","Slide the treat along the floor away from your dog.","When its elbows and belly touch the floor, say \"Yes!\" and treat.","Add the word \"Down\" once your dog follows your hand."],
+  tip:"If your dog stands up, that's okay. Just start again from sit."},
+ {id:"paw",name:"Paw / Shake",lvl:"Easy",say:"\"Paw\" or \"Shake\"",blurb:"Shake hands like a gentleman pup.",
+  steps:["Ask your dog to sit.","Hide a treat in your closed fist and hold it low near one paw.","Wait. Your dog will sniff, then lift its paw to dig at your hand.","When the paw lifts, say \"Yes!\" open your hand, and give the treat.","Hold out your open hand and say \"Paw\". Reward when the paw touches it."],
+  tip:"Once your dog knows it, try \"Other paw\" with the other hand!"},
+ {id:"come",name:"Come",lvl:"Medium",say:"\"Come!\"",blurb:"Run to you when called. This one keeps dogs safe!",
+  steps:["Start inside with a grown-up holding your dog a few steps away.","Crouch down, open your arms, and say \"Come!\" in your happiest voice.","Clap or pat your legs if your dog needs help.","When your dog gets to you, give a big treat party: treats, pets, and praise!","Move farther away little by little. Try it in the backyard with a grown-up."],
+  tip:"Never call your dog to come for something it doesn't like, like a bath. Coming to you should always be awesome."},
+ {id:"stay",name:"Stay",lvl:"Medium",say:"\"Stay\" with a flat hand",blurb:"Stay still until you say it's okay.",
+  steps:["Ask your dog to sit.","Hold your hand flat like a stop sign and say \"Stay.\"","Count to 2. If your dog stays, say \"Yes!\" and treat.","Next time count to 3, then 5, then 10.","Then take one small step back, and step right back to give the treat.","Say \"Okay!\" to tell your dog it can get up."],
+  tip:"Go slow. If your dog gets up, make the stay shorter next time."},
+ {id:"leave",name:"Leave It",lvl:"Medium",say:"\"Leave it\"",blurb:"Ignore things it shouldn't eat or grab.",
+  steps:["Put a treat in your closed hand and hold it out.","Your dog will sniff and lick. Keep your hand closed and wait.","When your dog backs away or looks at you, say \"Yes!\" and give a different treat from your other hand.","Once that's easy, say \"Leave it\" before you hold out your hand."],
+  tip:"The dog never gets the treat it was told to leave. It gets a better one from you!"},
+ {id:"drop",name:"Drop It",lvl:"Medium",say:"\"Drop it\"",blurb:"Let go of a toy when you ask.",
+  steps:["Play tug or let your dog hold a toy.","Hold a yummy treat right by its nose and say \"Drop it.\"","When the toy falls out, say \"Yes!\" and give the treat.","Give the toy back and play again. Dropping it means more fun!"],
+  tip:"Never chase your dog to grab a toy. That turns it into a game of keep-away."},
+ {id:"leash",name:"Leash Walking",lvl:"Tricky",say:"\"Let's go!\"",blurb:"Walk nicely without pulling. Always with a grown-up!",
+  steps:["Practice inside first. Let your dog wear the leash and get treats for being calm.","Hold the leash in a loose \"J\" shape, not tight.","Walk a few steps. When your dog is right next to your leg, say \"Yes!\" and treat.","If your dog pulls, stop and stand still like a tree. Start walking when the leash is loose again.","Change direction now and then so your dog watches where you're going."],
+  tip:"Big dogs can pull hard. Let a grown-up hold the leash too until your dog walks nicely."},
+ {id:"spin",name:"Spin",lvl:"Easy",say:"\"Spin\"",blurb:"Turn in a happy little circle.",
+  steps:["Hold a treat at your dog's nose.","Slowly draw a big circle with your hand so your dog follows it all the way around.","When it finishes the circle, say \"Yes!\" and treat.","Make the circle smaller each time, until just a twirl of your finger works."],
+  tip:"Teach \"Twirl\" the other direction for a bonus trick!"},
+ {id:"five",name:"High Five",lvl:"Medium",say:"\"High five!\"",blurb:"A paw slap for your best buddy.",
+  steps:["Make sure your dog already knows Paw.","Ask for Paw, but hold your hand a little higher than usual.","Slowly move your hand up until it's like a high five.","Reward every time the paw touches your palm."],
+  tip:"Learn Paw first, then this one is easy!"},
+ {id:"bed",name:"Go to Bed",lvl:"Medium",say:"\"Go to bed\"",blurb:"Go lie on its bed or mat.",
+  steps:["Stand next to your dog's bed or mat.","Toss a treat onto the bed. When your dog steps on it, say \"Yes!\"","Repeat until your dog runs to the bed on its own.","Ask for Down on the bed, then treat.","Add the words \"Go to bed\" and stand farther away."],
+  tip:"Great for when guests come over or your family is eating dinner."},
+ {id:"roll",name:"Roll Over",lvl:"Tricky",say:"\"Roll over\"",blurb:"A real show-off trick.",
+  steps:["Start with your dog in a Down.","Hold a treat by its nose and move it toward its shoulder so its head turns.","Keep moving the treat around so your dog rolls onto its side, then its back.","Finish the circle so it rolls all the way over. Say \"Yes!\" and treat.","Practice on soft carpet or grass."],
+  tip:"Reward halfway first (just rolling onto its side). Little steps add up!"},
+ {id:"bow",name:"Take a Bow",lvl:"Tricky",say:"\"Bow\"",blurb:"Front down, bottom up. Ta-da!",
+  steps:["Start with your dog standing.","Move a treat from its nose down to the floor between its front paws.","When its elbows go down but its bottom stays up, say \"Yes!\" quickly and treat.","If it lies all the way down, just start again.","Add \"Bow\" and take a bow together!"],
+  tip:"Dogs often bow when they stretch. Say \"Yes!\" and treat when you catch one!"}
+];
+
+const FURS=[["Golden","#e0a54a"],["Chocolate","#7a4a2a"],["Black","#2d2a2a"],["Cream","#f1dcb4"],["Gray","#9aa3ad"],["Red","#c0612c"],["White","#f7f4ee"]];
+const LEVELS=[[0,"Puppy Pal"],[5,"Treat Tosser"],[15,"Good Dog Coach"],[30,"Super Trainer"],[50,"Trick Master"],[70,"Dog Training Champion"]];
+
+/* ---------- state ---------- */
+let st={name:store.get('name',''),fur:store.get('fur',0),breed:store.get('breed','Mixed Breed'),
+        treats:store.get('treats',0),stars:store.get('stars',{}),contacts:store.get('contacts',[])};
+const save=k=>store.set(k,st[k]);
+const groupOf=b=>Object.keys(GROUPS).find(g=>GROUPS[g].list.includes(b))||"Not sure";
+const dogName=()=>st.name.trim()||"your dog";
+
+/* ---------- dog face ---------- */
+function dogSVG(fur){
+  const light=["#f1dcb4","#f7f4ee"].includes(fur);
+  const ear=light?"#c9a979":"color-mix(in srgb,"+fur+" 70%,#000)";
+  return `<ellipse cx="26" cy="52" rx="15" ry="28" fill="${ear}" transform="rotate(18 26 52)"/>
+  <ellipse cx="94" cy="52" rx="15" ry="28" fill="${ear}" transform="rotate(-18 94 52)"/>
+  <circle cx="60" cy="62" r="40" fill="${fur}" stroke="#2a1d14" stroke-opacity=".15" stroke-width="2"/>
+  <ellipse cx="60" cy="80" rx="22" ry="17" fill="#fff6e6"/>
+  <circle cx="45" cy="55" r="6" fill="#1b1410"/><circle cx="75" cy="55" r="6" fill="#1b1410"/>
+  <circle cx="47" cy="53" r="2" fill="#fff"/><circle cx="77" cy="53" r="2" fill="#fff"/>
+  <ellipse cx="60" cy="72" rx="8" ry="6" fill="#1b1410"/>
+  <path d="M60 78 v6 M52 85 q8 6 16 0" stroke="#1b1410" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M56 88 q4 10 8 0 z" fill="#ff7a8a"/>`;
+}
+function renderDog(){
+  const f=FURS[st.fur][1];
+  $('#headDog').innerHTML=dogSVG(f);
+  $('#hello').textContent=st.name.trim()?`Let's train ${st.name.trim()} today!`:"Teach your pup new tricks and earn stars!";
+}
+
+/* ---------- my dog tab ---------- */
+function renderSwatches(){
+  $('#swatches').innerHTML=FURS.map((f,i)=>`<button class="sw" style="background:${f[1]}" aria-label="${f[0]}" aria-pressed="${i===st.fur}" data-i="${i}"></button>`).join('');
+}
+$('#swatches').addEventListener('click',e=>{const b=e.target.closest('.sw');if(!b)return;st.fur=+b.dataset.i;save('fur');renderSwatches();renderDog();wag();});
+const nameIn=$('#dogName');nameIn.value=st.name;
+nameIn.addEventListener('input',()=>{st.name=nameIn.value;save('name');renderDog();renderTotd();renderPhones();});
+
+function renderBreedBox(){
+  const g=groupOf(st.breed);
+  $('#breedbox').innerHTML=`<svg viewBox="0 0 120 120" width="64" height="64" style="flex:none" aria-hidden="true">${dogSVG(FURS[st.fur][1])}</svg>
+   <div style="min-width:0"><div class="label">${esc(g==="Not sure"?"Every dog is special":g+" group")}</div><b>${esc(st.breed)}</b><p class="small">${esc(GROUPS[g].tip)}</p></div>`;
+}
+function renderBreeds(){
+  const q=$('#breedSearch').value.trim().toLowerCase();
+  let html="",any=false;
+  for(const g in GROUPS){
+    const items=GROUPS[g].list.filter(b=>!q||b.toLowerCase().includes(q));
+    if(!items.length)continue;any=true;
+    html+=`<div class="grp"><div class="label">${esc(g)}</div><div class="chips">${items.map(b=>`<button class="chip" data-b="${esc(b)}" aria-pressed="${b===st.breed}">${esc(b)}</button>`).join('')}</div></div>`;
+  }
+  if(!any)html=`<div class="grp"><p>No breed called "${esc(q)}". Try another spelling, or pick:</p><div class="chips"><button class="chip" data-b="Mixed Breed" aria-pressed="${st.breed==='Mixed Breed'}">Mixed Breed</button></div></div>`;
+  $('#breedpick').innerHTML=html;
+}
+$('#breedSearch').addEventListener('input',renderBreeds);
+$('#breedpick').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;st.breed=b.dataset.b;save('breed');renderBreeds();renderBreedBox();toast(`${st.breed}! Great pick.`);});
+
+/* clicker */
+let actx=null;
+function clickSound(){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();o.type="square";o.frequency.value=2200;
+    g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.06);
+    o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+.07);}catch(e){}
+}
+$('#clickBtn').addEventListener('click',()=>{clickSound();st.treats++;save('treats');$('#treatCount').textContent=st.treats;
+  if(st.treats%10===0){confetti();toast(`${st.treats} treats! ${dogName()} is a happy pup!`);}});
+$('#treatReset').addEventListener('click',()=>{st.treats=0;save('treats');$('#treatCount').textContent=0;});
+
+/* trick of the day */
+function renderTotd(){
+  const d=new Date();const idx=(d.getFullYear()*372+d.getMonth()*31+d.getDate())%TRICKS.length;const t=TRICKS[idx];
+  $('#totd').innerHTML=`<div class="label">Trick of the day</div><h2>${esc(t.name)}</h2><p>${esc(t.blurb)} Can you teach ${esc(dogName())} today?</p>
+   <div class="row"><button class="btn" data-open="${t.id}">Show me how</button></div>`;
+}
+$('#totd').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b){showTab('tricks');openTrick(b.dataset.open);}});
+
+/* ---------- tricks ---------- */
+const STAR=(on,s)=>`<svg viewBox="0 0 24 24" ${s?`width="${s}" height="${s}"`:''}><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z" fill="${on?'var(--sun)':'var(--line)'}" stroke="${on?'#c79500':'none'}" stroke-width="1"/></svg>`;
+const starsFor=id=>Math.min(5,st.stars[id]||0);
+const starRow=id=>{const n=starsFor(id);return `<div class="stars" aria-label="${n} of 5 stars">${[0,1,2,3,4].map(i=>STAR(i<n)).join('')}</div>`;};
+function renderTricks(){
+  $('#trickGrid').innerHTML=TRICKS.map(t=>`<button class="trick" data-open="${t.id}"><span class="lvl ${t.lvl}">${t.lvl}</span><h3>${esc(t.name)}</h3><p class="muted small">${esc(t.blurb)}</p>${starRow(t.id)}</button>`).join('');
+}
+$('#trickGrid').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b)openTrick(b.dataset.open);});
+let openId=null;
+function openTrick(id){
+  openId=id;const t=TRICKS.find(x=>x.id===id);const n=starsFor(id);const el=$('#trickDetail');el.hidden=false;el.classList.add('detail');
+  el.innerHTML=`<div class="row" style="justify-content:space-between"><span class="lvl ${t.lvl}">${t.lvl}</span><button class="btn ghost small" data-close style="padding:6px 14px;font-size:.9rem">Close</button></div>
+   <h2>${esc(t.name)}</h2><p><span class="label">Say it:</span> <b>${esc(t.say)}</b></p>
+   <ol>${t.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+   <div class="tip"><b>Trainer tip:</b> ${esc(t.tip)}</div>
+   <div class="label">Practice stars</div>${starRow(id)}
+   <div class="row">${n>=5?`<b style="font-family:var(--display);font-size:1.2rem;color:var(--grass)">Badge won! ${esc(dogName())} knows ${esc(t.name)}!</b>`:`<button class="btn green" data-practice>We practiced! +1 star</button>`}</div>`;
+  el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});
+}
+$('#trickDetail').addEventListener('click',e=>{
+  if(e.target.closest('[data-close]')){$('#trickDetail').hidden=true;openId=null;return;}
+  if(e.target.closest('[data-practice]')){
+    st.stars[openId]=starsFor(openId)+1;save('stars');const t=TRICKS.find(x=>x.id===openId);
+    if(st.stars[openId]>=5){confetti();toast(`New badge: ${t.name}!`);}else toast(`+1 star! ${5-st.stars[openId]} more for the badge.`);
+    openTrick(openId);renderTricks();renderStars();wag();
+  }
+});
+
+/* ---------- stars ---------- */
+function medal(won){return `<svg class="medal" viewBox="0 0 64 64" aria-hidden="true"><path d="M22 4h8l4 18h-8zM42 4h-8l-4 18h8z" fill="${won?'var(--ball)':'var(--line)'}"/><circle cx="32" cy="38" r="20" fill="${won?'var(--sun)':'var(--line)'}" stroke="${won?'#c79500':'none'}" stroke-width="2"/>
+ <g fill="${won?'#8a5a00':'var(--card)'}"><ellipse cx="24" cy="34" rx="3" ry="4"/><ellipse cx="40" cy="34" rx="3" ry="4"/><ellipse cx="29" cy="29" rx="2.6" ry="3.4"/><ellipse cx="35" cy="29" rx="2.6" ry="3.4"/><path d="M32 37c4 0 7 5 7 8s-3 3-4 3-2-1-3-1-2 1-3 1-4 0-4-3 3-8 7-8z"/></g></svg>`;}
+function renderStars(){
+  const total=TRICKS.reduce((a,t)=>a+starsFor(t.id),0);
+  $('#totalStars').textContent=total;
+  let cur=LEVELS[0],next=null;for(let i=0;i<LEVELS.length;i++){if(total>=LEVELS[i][0]){cur=LEVELS[i];next=LEVELS[i+1]||null;}}
+  $('#levelName').textContent=cur[1];
+  const pct=next?((total-cur[0])/(next[0]-cur[0]))*100:100;$('#meter').style.width=pct+'%';
+  $('#levelNext').textContent=next?`${next[0]-total} more stars to become a ${next[1]}!`:"You earned every star. You're a champion trainer!";
+  $('#badges').innerHTML=TRICKS.map(t=>{const won=starsFor(t.id)>=5;return `<div class="badge ${won?'':'locked'}">${medal(won)}<b>${esc(t.name)}</b><span class="muted small">${starsFor(t.id)}/5</span></div>`;}).join('');
+}
+$('#resetRow').addEventListener('click',e=>{
+  if(e.target.id==='resetStars'){$('#resetRow').innerHTML=`<span>Are you sure?</span><button class="btn" id="yesReset">Yes, clear</button><button class="btn ghost" id="noReset">Keep my stars</button>`;}
+  else if(e.target.id==='yesReset'){st.stars={};save('stars');renderStars();renderTricks();resetBtn();toast("Stars cleared. Fresh start!");}
+  else if(e.target.id==='noReset')resetBtn();
+});
+function resetBtn(){$('#resetRow').innerHTML=`<button class="btn ghost" id="resetStars">Clear all stars</button>`;}
+
+/* ---------- phones ---------- */
+const WHO=["Mom","Dad","Grandma","Grandpa","Vet","Neighbor"];
+$('#whoChips').innerHTML=WHO.map(w=>`<button class="chip" data-w="${w}">${w}</button>`).join('');
+$('#whoChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){$('#cName').value=b.dataset.w;$('#cNum').focus();}});
+function renderPhones(){
+  $('#idName').textContent=st.name.trim()?`My name is ${st.name.trim()}. Please call my family!`:"Please call my family!";
+  const L=$('#idList');
+  if(!st.contacts.length){L.innerHTML=`<p class="muted">No numbers yet. Add Mom, Dad, or the vet below.</p>`;return;}
+  L.innerHTML=st.contacts.map((c,i)=>`<div class="contact"><div class="who"><b>${esc(c.name)}</b><span class="num">${esc(c.num)}</span></div>
+    <span data-row="${i}" class="row"><button class="btn ghost small" data-copy="${i}" style="padding:6px 14px;font-size:.9rem">Copy</button><button class="btn ghost small" data-del="${i}" style="padding:6px 14px;font-size:.9rem">Remove</button></span></div>`).join('');
+}
+function fmt(n){const d=n.replace(/\D/g,'');if(d.length===10)return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;if(d.length===11&&d[0]==='1')return `(${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;return n.trim();}
+$('#addContact').addEventListener('click',()=>{
+  const name=$('#cName').value.trim(),num=$('#cNum').value.trim();const msg=$('#addMsg');
+  if(!name){msg.textContent="Type who the number belongs to.";$('#cName').focus();return;}
+  if(num.replace(/\D/g,'').length<7){msg.textContent="That number looks too short. Check it and try again.";$('#cNum').focus();return;}
+  st.contacts.push({name,num:fmt(num)});save('contacts');$('#cName').value='';$('#cNum').value='';msg.textContent='';renderPhones();toast(`Added ${name}!`);
+});
+$('#idList').addEventListener('click',e=>{
+  const c=e.target.closest('[data-copy]'),d=e.target.closest('[data-del]'),y=e.target.closest('[data-yes]'),n=e.target.closest('[data-no]');
+  if(c){const t=st.contacts[+c.dataset.copy].num;navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>toast("Copied!"),()=>toast("Press and hold the number to copy it."));if(!navigator.clipboard)toast("Press and hold the number to copy it.");}
+  if(d){const i=d.dataset.del;d.parentElement.innerHTML=`<span class="small">Remove?</span><button class="btn small" data-yes="${i}" style="padding:6px 14px;font-size:.9rem">Yes</button><button class="btn ghost small" data-no style="padding:6px 14px;font-size:.9rem">No</button>`;}
+  if(y){st.contacts.splice(+y.dataset.yes,1);save('contacts');renderPhones();}
+  if(n)renderPhones();
+});
+
+/* ---------- tabs + fun ---------- */
+function showTab(name){
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name));
+  document.querySelectorAll('.tabpanel').forEach(p=>p.hidden=p.id!=='tab-'+name);
+  window.scrollTo(0,0);
+}
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showTab(b.dataset.tab);});
+function wag(){const d=$('#headDog');d.classList.remove('wag');void d.getBBox;requestAnimationFrame(()=>d.classList.add('wag'));}
+$('#headDog').addEventListener('click',wag);
+function confetti(){
+  const box=document.createElement('div');box.className='confetti';const cols=['#ff7a2f','#ffcf33','#23a865','#3a86ff','#ff5c8a'];
+  for(let i=0;i<60;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=cols[i%5];p.style.animationDelay=Math.random()*.5+'s';p.style.animationDuration=(1.4+Math.random())+'s';box.appendChild(p);}
+  document.body.appendChild(box);setTimeout(()=>box.remove(),3000);
+}
+let tt;function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200);}
+
+/* init */
+$('#treatCount').textContent=st.treats;
+renderDog();renderSwatches();renderBreedBox();renderBreeds();renderTotd();renderTricks();renderStars();renderPhones();
+})();
+</script>
+
+</body>
+</html>
