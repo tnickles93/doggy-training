@@ -28,7 +28,7 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
-.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:16px 120px;display:grid;gap:18px}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:16px 160px;display:grid;gap:18px}
 h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.15}
 h1{font-size:2.1rem}
 h2{font-size:1.6rem}
@@ -52,7 +52,7 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
 .top .t{min-width:0;flex:1}
 
 /* tabs */
-.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
 .tabs button{background:none;border:0;border-radius:16px;padding:8px 4px;display:grid;justify-items:center;gap:2px;font-family:var(--display);font-weight:800;font-size:.95rem;color:var(--muted)}
 .tabs button svg{width:28px;height:28px}
 .tabs button[aria-selected=true]{color:var(--ink);background:color-mix(in srgb,var(--sun) 35%,transparent)}
@@ -118,7 +118,58 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
 .toast{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-family:var(--display);font-weight:800;z-index:10;max-width:calc(100% - 32px);text-align:center}
 .wag{animation:wag .5s ease-in-out 2}
 @keyframes wag{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
-@media (prefers-reduced-motion:reduce){.confetti{display:none}.wag{animation:none}.meter i{transition:none}}
+/* open/closed pill + hours */
+.openpill{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:999px;font-size:.88rem;font-weight:600;background:var(--bg);border:2px solid var(--line);color:var(--ink)}
+.openpill::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--dot,var(--muted))}
+.openpill.open{--dot:var(--grass)}
+.openpill.closed{--dot:var(--ball)}
+.t .openpill{margin-top:6px}
+.hours{display:grid;gap:4px}
+.hours div{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:12px;font-variant-numeric:tabular-nums}
+.hours div.today{background:color-mix(in srgb,var(--sun) 30%,transparent);font-weight:600}
+.hours .shut{color:var(--muted)}
+
+/* toggle */
+.toggle{display:flex;align-items:center;gap:12px;font-weight:600;cursor:pointer}
+.toggle input{width:52px;height:30px;appearance:none;-webkit-appearance:none;background:var(--line);border-radius:999px;position:relative;cursor:pointer;flex:none;margin:0}
+.toggle input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle input:checked{background:var(--grass)}
+.toggle input:checked::after{left:25px}
+
+/* virtual pet */
+.petstage{position:relative;display:grid;justify-items:center;gap:8px;padding:16px 8px 10px;border-radius:20px;background:linear-gradient(var(--bg) 72%,color-mix(in srgb,var(--grass) 28%,var(--bg)) 72%);overflow:hidden}
+.petdog{width:210px;height:210px;max-width:70%;cursor:pointer;touch-action:manipulation}
+.bubble{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:8px 16px;font-family:var(--display);font-weight:800;font-size:1.15rem;max-width:90%;text-align:center;min-height:2.6em;display:grid;place-items:center}
+.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.mtr{display:grid;gap:4px}
+.mtr .meter{height:14px}
+.mtr .meter i.low{background:var(--ball)}
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.act{border:2px solid var(--line);background:var(--card);border-radius:18px;padding:12px 8px;display:grid;justify-items:center;gap:4px;font-family:var(--display);font-weight:800;font-size:1.1rem}
+.act svg{width:42px;height:42px}
+.act:active{transform:scale(.96)}
+.act:disabled{opacity:.5}
+.fx{position:absolute;pointer-events:none;font-family:var(--display);font-weight:800;font-size:1.7rem;animation:floatup 1.6s ease-out forwards}
+@keyframes floatup{from{transform:translateY(0) scale(.8);opacity:1}to{transform:translateY(-100px) scale(1.2);opacity:0}}
+.bounce{animation:bounce .45s ease 2}
+@keyframes bounce{50%{transform:translateY(-18px)}}
+.sleeping{animation:breathe 2s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.04)}}
+
+/* running puppy */
+.runner{position:fixed;left:0;bottom:calc(88px + env(safe-area-inset-bottom,0px));width:76px;height:48px;z-index:4;border:0;background:none;padding:0;cursor:pointer;touch-action:manipulation}
+.runner .flip{display:block;width:100%;height:100%}
+.runner svg{width:100%;height:100%;display:block;overflow:visible}
+.runner .leg{transform-box:fill-box;transform-origin:top center;animation:leg .28s ease-in-out infinite alternate}
+.runner .leg.b{animation-direction:alternate-reverse}
+.runner .tail{transform-box:fill-box;transform-origin:bottom right;animation:tail .3s ease-in-out infinite alternate}
+@keyframes leg{from{transform:rotate(28deg)}to{transform:rotate(-28deg)}}
+@keyframes tail{from{transform:rotate(-15deg)}to{transform:rotate(15deg)}}
+.runner.resting .leg{animation:none}
+.runner.jump svg{animation:jump .5s ease}
+@keyframes jump{50%{transform:translateY(-44px)}}
+.runner .woof{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:2px 10px;font-family:var(--display);font-weight:800;font-size:.95rem;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}.wag,.bounce,.sleeping,.runner .leg,.runner .tail,.runner.jump svg{animation:none}.meter i{transition:none}}
 </style>
 
 </head>
@@ -129,6 +180,7 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
     <div class="t">
       <h1>Doggy Training</h1>
       <p class="muted" id="hello">Teach your pup new tricks and earn stars!</p>
+      <span class="openpill" id="openPill"></span>
     </div>
   </header>
 
@@ -146,6 +198,11 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
         <div class="label">Fur color</div>
         <div class="swatches" id="swatches"></div>
       </div>
+      <div>
+        <div class="label">Dress up</div>
+        <div class="chips" id="accChips"></div>
+      </div>
+      <label class="toggle" for="runToggle"><input type="checkbox" id="runToggle"> Running puppy on the screen</label>
     </div>
 
     <div class="card">
@@ -166,6 +223,25 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
           <div class="treats" id="treatCount">0</div>
           <button class="btn ghost small" id="treatReset" style="padding:6px 14px;font-size:.9rem">Start over</button>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PET -->
+  <section id="tab-pet" class="tabpanel" hidden style="display:grid;gap:18px">
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h2 id="petTitle">My puppy</h2><span class="muted small" id="petDays"></span></div>
+      <div class="petstage" id="petStage">
+        <div class="bubble" id="petSay" role="status">Woof!</div>
+        <svg class="petdog" id="petDog" viewBox="0 0 120 120" role="img" aria-label="Your puppy. Tap to pet."></svg>
+      </div>
+      <p class="muted small" style="text-align:center">Tap your puppy to give it pets!</p>
+      <div class="meters" id="petMeters"></div>
+      <div class="actions">
+        <button class="act" data-act="feed"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 20h32a16 12 0 0 1-32 0z" fill="#ff7a2f"/><ellipse cx="20" cy="20" rx="16" ry="3.5" fill="#7a4a2a"/><circle cx="14" cy="17" r="3.2" fill="#a0612c"/><circle cx="21" cy="16" r="3.2" fill="#a0612c"/><circle cx="27" cy="18" r="2.8" fill="#a0612c"/></svg>Feed</button>
+        <button class="act" data-act="play"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15" fill="#ffcf33"/><path d="M8 12 Q20 22 32 12 M8 28 Q20 18 32 28" stroke="#c79500" stroke-width="2.5" fill="none"/></svg>Play</button>
+        <button class="act" data-act="nap"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M24 5 A15 15 0 1 0 35 26 A12 12 0 0 1 24 5z" fill="#7b6cff"/><circle cx="31" cy="9" r="1.8" fill="#ffcf33"/><circle cx="36" cy="16" r="1.3" fill="#ffcf33"/></svg>Nap</button>
+        <button class="act" data-act="bath"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="14" cy="24" r="9" fill="rgba(120,190,255,.3)" stroke="#3a86ff" stroke-width="3"/><circle cx="27" cy="13" r="6" fill="rgba(120,190,255,.3)" stroke="#3a86ff" stroke-width="3"/><circle cx="30" cy="29" r="4" fill="rgba(120,190,255,.3)" stroke="#3a86ff" stroke-width="3"/></svg>Bath</button>
       </div>
     </div>
   </section>
@@ -220,9 +296,14 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
   <!-- PHONES -->
   <section id="tab-phone" class="tabpanel" hidden style="display:grid;gap:18px">
     <div class="card idtag">
-      <div class="label">If you find this dog</div>
-      <h2 id="idName">Please call us!</h2>
+      <div class="label">Call us</div>
+      <h2>Doggy Training</h2>
+      <p class="muted">Call to book a class or ask a training question!</p>
       <div class="contacts" id="idList"></div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h2>Hours</h2><span class="openpill" id="openPill2"></span></div>
+      <div class="hours" id="hoursList"></div>
     </div>
     <div class="card">
       <h2>Add a phone number</h2>
@@ -239,10 +320,12 @@ input[type=text],input[type=tel],input[type=search]{font:inherit;width:100%;padd
 
 <nav class="tabs" role="tablist" aria-label="Sections">
   <button role="tab" data-tab="dog" aria-selected="true"><svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="6" cy="9" rx="2.2" ry="3"/><ellipse cx="18" cy="9" rx="2.2" ry="3"/><ellipse cx="9.5" cy="5" rx="2" ry="2.8"/><ellipse cx="14.5" cy="5" rx="2" ry="2.8"/><path d="M12 11c3.5 0 6 4.5 6 7 0 2-1.6 3-3.3 3-1 0-1.8-.6-2.7-.6s-1.7.6-2.7.6C7.6 21 6 20 6 18c0-2.5 2.5-7 6-7z"/></svg>My Dog</button>
+  <button role="tab" data-tab="pet" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg>Pet</button>
   <button role="tab" data-tab="tricks" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h9a5 5 0 0 1 5 5v11H8a4 4 0 0 1-4-4z"/><rect x="7" y="8" width="7" height="1.8" rx=".9" fill="var(--card)"/><rect x="7" y="12" width="5" height="1.8" rx=".9" fill="var(--card)"/></svg>Tricks</button>
   <button role="tab" data-tab="stars" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>Stars</button>
-  <button role="tab" data-tab="phone" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 2.5l3 .6 1.4 4.3-2 1.6a12 12 0 0 0 6 6l1.6-2 4.3 1.4.6 3c.1.8-.5 1.6-1.3 1.7C10.6 19.8 4.2 13.4 3.4 4.1c0-.8.7-1.5 1.5-1.6z"/></svg>Phone</button>
+  <button role="tab" data-tab="phone" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 2.5l3 .6 1.4 4.3-2 1.6a12 12 0 0 0 6 6l1.6-2 4.3 1.4.6 3c.1.8-.5 1.6-1.3 1.7C10.6 19.8 4.2 13.4 3.4 4.1c0-.8.7-1.5 1.5-1.6z"/></svg>Call Us</button>
 </nav>
+<button class="runner" id="runner" aria-label="Running puppy. Tap to make it bark."><span class="flip"></span><span class="woof" id="woof" hidden></span></button>
 
 <script>
 (function(){
@@ -314,28 +397,41 @@ const LEVELS=[[0,"Puppy Pal"],[5,"Treat Tosser"],[15,"Good Dog Coach"],[30,"Supe
 
 /* ---------- state ---------- */
 let st={name:store.get('name',''),fur:store.get('fur',0),breed:store.get('breed','Mixed Breed'),
-        treats:store.get('treats',0),stars:store.get('stars',{}),contacts:store.get('contacts',[])};
+        treats:store.get('treats',0),stars:store.get('stars',{}),contacts:store.get('contacts',[]),
+        acc:store.get('acc','none'),runner:store.get('runner',true),pet:store.get('pet',null)};
 const save=k=>store.set(k,st[k]);
 const groupOf=b=>Object.keys(GROUPS).find(g=>GROUPS[g].list.includes(b))||"Not sure";
 const dogName=()=>st.name.trim()||"your dog";
 
 /* ---------- dog face ---------- */
-function dogSVG(fur){
-  const light=["#f1dcb4","#f7f4ee"].includes(fur);
-  const ear=light?"#c9a979":"color-mix(in srgb,"+fur+" 70%,#000)";
+function shade(hex,f){const n=parseInt(hex.slice(1),16);return '#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.round(v*f).toString(16).padStart(2,'0')).join('');}
+const earOf=fur=>["#f1dcb4","#f7f4ee"].includes(fur)?"#c9a979":shade(fur,.7);
+const ACC={none:"",
+ bow:`<g transform="translate(86 28) rotate(20)"><path d="M0 0 L-14 -9 L-14 9 Z M0 0 L14 -9 L14 9 Z" fill="#ff5c8a"/><circle r="4.5" fill="#e23b6d"/></g>`,
+ hat:`<path d="M44 28 L60 0 L76 28 Z" fill="#3a86ff"/><path d="M50 18 H70 M54.5 10 H65.5" stroke="#ffcf33" stroke-width="3"/><circle cx="60" cy="3" r="4.5" fill="#ff5c8a"/>`,
+ shades:`<g fill="#1b1410"><rect x="33" y="47" width="23" height="15" rx="5"/><rect x="64" y="47" width="23" height="15" rx="5"/></g><path d="M56 52 H64 M33 51 L24 47 M87 51 L96 47" stroke="#1b1410" stroke-width="3"/><path d="M37 51 h6 M68 51 h6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>`,
+ crown:`<path d="M42 27 L44 8 L52 18 L60 4 L68 18 L76 8 L78 27 Z" fill="#ffcf33" stroke="#c79500" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="18" r="3" fill="#e63946"/><circle cx="48" cy="22" r="2" fill="#3a86ff"/><circle cx="72" cy="22" r="2" fill="#3a86ff"/>`};
+const NECK={bandana:`<path d="M34 95 Q60 108 86 95 L60 119 Z" fill="#e63946"/><circle cx="50" cy="103" r="2" fill="#fff"/><circle cx="70" cy="103" r="2" fill="#fff"/><circle cx="60" cy="111" r="2" fill="#fff"/>`};
+const ACCS=[["none","None"],["bow","Bow"],["hat","Party hat"],["bandana","Bandana"],["shades","Sunglasses"],["crown","Crown"]];
+function dogSVG(fur,o={}){
+  const ear=earOf(fur),acc=o.acc||'none',mood=o.mood||'happy';
+  const eyes=mood==='sleep'
+   ?`<path d="M39 55 q6 5 12 0 M69 55 q6 5 12 0" stroke="#1b1410" stroke-width="3" fill="none" stroke-linecap="round"/>`
+   :`<circle cx="45" cy="55" r="6" fill="#1b1410"/><circle cx="75" cy="55" r="6" fill="#1b1410"/><circle cx="47" cy="53" r="2" fill="#fff"/><circle cx="77" cy="53" r="2" fill="#fff"/>`
+    +(mood==='sad'?`<path d="M38 47 L50 42 M82 47 L70 42" stroke="#1b1410" stroke-width="3" stroke-linecap="round"/>`:'');
+  const mouth=mood==='sad'
+   ?`<path d="M60 78 v5 M52 90 q8 -7 16 0" stroke="#1b1410" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+   :mood==='sleep'
+   ?`<path d="M60 78 v5 M55 86 q5 3 10 0" stroke="#1b1410" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+   :`<path d="M60 78 v6 M52 85 q8 6 16 0" stroke="#1b1410" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M56 88 q4 10 8 0 z" fill="#ff7a8a"/>`;
   return `<ellipse cx="26" cy="52" rx="15" ry="28" fill="${ear}" transform="rotate(18 26 52)"/>
   <ellipse cx="94" cy="52" rx="15" ry="28" fill="${ear}" transform="rotate(-18 94 52)"/>
   <circle cx="60" cy="62" r="40" fill="${fur}" stroke="#2a1d14" stroke-opacity=".15" stroke-width="2"/>
-  <ellipse cx="60" cy="80" rx="22" ry="17" fill="#fff6e6"/>
-  <circle cx="45" cy="55" r="6" fill="#1b1410"/><circle cx="75" cy="55" r="6" fill="#1b1410"/>
-  <circle cx="47" cy="53" r="2" fill="#fff"/><circle cx="77" cy="53" r="2" fill="#fff"/>
-  <ellipse cx="60" cy="72" rx="8" ry="6" fill="#1b1410"/>
-  <path d="M60 78 v6 M52 85 q8 6 16 0" stroke="#1b1410" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <path d="M56 88 q4 10 8 0 z" fill="#ff7a8a"/>`;
+  ${NECK[acc]||''}<ellipse cx="60" cy="80" rx="22" ry="17" fill="#fff6e6"/>
+  ${eyes}<ellipse cx="60" cy="72" rx="8" ry="6" fill="#1b1410"/>${mouth}${ACC[acc]||''}`;
 }
 function renderDog(){
-  const f=FURS[st.fur][1];
-  $('#headDog').innerHTML=dogSVG(f);
+  $('#headDog').innerHTML=dogSVG(FURS[st.fur][1],{acc:st.acc});
   $('#hello').textContent=st.name.trim()?`Let's train ${st.name.trim()} today!`:"Teach your pup new tricks and earn stars!";
 }
 
@@ -343,13 +439,13 @@ function renderDog(){
 function renderSwatches(){
   $('#swatches').innerHTML=FURS.map((f,i)=>`<button class="sw" style="background:${f[1]}" aria-label="${f[0]}" aria-pressed="${i===st.fur}" data-i="${i}"></button>`).join('');
 }
-$('#swatches').addEventListener('click',e=>{const b=e.target.closest('.sw');if(!b)return;st.fur=+b.dataset.i;save('fur');renderSwatches();renderDog();wag();});
+$('#swatches').addEventListener('click',e=>{const b=e.target.closest('.sw');if(!b)return;st.fur=+b.dataset.i;save('fur');renderSwatches();renderDog();renderBreedBox();renderRunner();renderPet();wag();});
 const nameIn=$('#dogName');nameIn.value=st.name;
-nameIn.addEventListener('input',()=>{st.name=nameIn.value;save('name');renderDog();renderTotd();renderPhones();});
+nameIn.addEventListener('input',()=>{st.name=nameIn.value;save('name');renderDog();renderTotd();renderPet();});
 
 function renderBreedBox(){
   const g=groupOf(st.breed);
-  $('#breedbox').innerHTML=`<svg viewBox="0 0 120 120" width="64" height="64" style="flex:none" aria-hidden="true">${dogSVG(FURS[st.fur][1])}</svg>
+  $('#breedbox').innerHTML=`<svg viewBox="0 0 120 120" width="64" height="64" style="flex:none" aria-hidden="true">${dogSVG(FURS[st.fur][1],{acc:st.acc})}</svg>
    <div style="min-width:0"><div class="label">${esc(g==="Not sure"?"Every dog is special":g+" group")}</div><b>${esc(st.breed)}</b><p class="small">${esc(GROUPS[g].tip)}</p></div>`;
 }
 function renderBreeds(){
@@ -434,13 +530,12 @@ $('#resetRow').addEventListener('click',e=>{
 function resetBtn(){$('#resetRow').innerHTML=`<button class="btn ghost" id="resetStars">Clear all stars</button>`;}
 
 /* ---------- phones ---------- */
-const WHO=["Mom","Dad","Grandma","Grandpa","Vet","Neighbor"];
+const WHO=["Main line","Trainer","Mom","Dad","Text us"];
 $('#whoChips').innerHTML=WHO.map(w=>`<button class="chip" data-w="${w}">${w}</button>`).join('');
 $('#whoChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){$('#cName').value=b.dataset.w;$('#cNum').focus();}});
 function renderPhones(){
-  $('#idName').textContent=st.name.trim()?`My name is ${st.name.trim()}. Please call my family!`:"Please call my family!";
   const L=$('#idList');
-  if(!st.contacts.length){L.innerHTML=`<p class="muted">No numbers yet. Add Mom, Dad, or the vet below.</p>`;return;}
+  if(!st.contacts.length){L.innerHTML=`<p class="muted">No numbers yet. Add one below.</p>`;return;}
   L.innerHTML=st.contacts.map((c,i)=>`<div class="contact"><div class="who"><b>${esc(c.name)}</b><span class="num">${esc(c.num)}</span></div>
     <span data-row="${i}" class="row"><button class="btn ghost small" data-copy="${i}" style="padding:6px 14px;font-size:.9rem">Copy</button><button class="btn ghost small" data-del="${i}" style="padding:6px 14px;font-size:.9rem">Remove</button></span></div>`).join('');
 }
@@ -463,6 +558,7 @@ $('#idList').addEventListener('click',e=>{
 function showTab(name){
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name));
   document.querySelectorAll('.tabpanel').forEach(p=>p.hidden=p.id!=='tab-'+name);
+  if(name==='pet'){decay();renderPet();}
   window.scrollTo(0,0);
 }
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showTab(b.dataset.tab);});
@@ -475,9 +571,104 @@ function confetti(){
 }
 let tt;function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200);}
 
+/* ---------- dress up + runner toggle ---------- */
+function renderAcc(){$('#accChips').innerHTML=ACCS.map(a=>`<button class="chip" data-a="${a[0]}" aria-pressed="${st.acc===a[0]}">${a[1]}</button>`).join('');}
+$('#accChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;st.acc=b.dataset.a;save('acc');renderAcc();renderDog();renderBreedBox();renderPet();wag();});
+const runT=$('#runToggle');runT.checked=st.runner;
+runT.addEventListener('change',()=>{st.runner=runT.checked;save('runner');$('#runner').hidden=!st.runner;});
+
+/* ---------- bark sound ---------- */
+function bark(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const a=actx,t=a.currentTime;
+  [0,.22].forEach(d=>{const o=a.createOscillator(),g=a.createGain(),f=a.createBiquadFilter();o.type='sawtooth';
+    o.frequency.setValueAtTime(460,t+d);o.frequency.exponentialRampToValueAtTime(170,t+d+.16);f.type='lowpass';f.frequency.value=1400;
+    g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.3,t+d+.02);g.gain.exponentialRampToValueAtTime(.001,t+d+.18);
+    o.connect(f).connect(g).connect(a.destination);o.start(t+d);o.stop(t+d+.2);});}catch(e){}}
+
+/* ---------- virtual pet ---------- */
+const RATE={food:8,fun:6,energy:5,clean:3}; // points lost per hour
+const METERS=[["food","Tummy"],["fun","Fun"],["energy","Energy"],["clean","Clean"]];
+if(!st.pet||typeof st.pet.food!=='number'){const n=Date.now();st.pet={food:75,fun:75,energy:80,clean:85,t:n,born:n,pets:0};save('pet');}
+let napping=false,petMsg=null,talkT;
+const clamp=v=>Math.max(5,Math.min(100,v));
+function decay(){const n=Date.now(),h=Math.max(0,(n-st.pet.t)/36e5);for(const k in RATE)st.pet[k]=Math.max(Math.min(st.pet[k],5),st.pet[k]-RATE[k]*h);st.pet.t=n;}
+function mood(){if(napping)return'sleep';const p=st.pet;return Math.min(p.food,p.fun,p.energy,p.clean)<30?'sad':'happy';}
+function sayLine(){const p=st.pet;if(napping)return"Zzz... zzz...";if(petMsg)return petMsg;
+  const low=METERS.map(m=>[m[0],p[m[0]]]).sort((a,b)=>a[1]-b[1])[0];
+  if(low[1]<30)return{food:"My tummy is rumbling! Can I have food?",fun:"I'm bored. Let's play! Pleeease?",energy:"*yawn* I'm so sleepy...",clean:"I rolled in the mud! Bath time?"}[low[0]];
+  if(low[1]>70)return"I'm so happy! I love you!";
+  return"Woof! What should we do?";}
+function renderPet(){
+  const p=st.pet,nm=st.name.trim();
+  $('#petTitle').textContent=nm||"My puppy";
+  $('#petDays').textContent=`Day ${Math.floor((Date.now()-p.born)/864e5)+1} together · ${p.pets} pets`;
+  const d=$('#petDog');d.innerHTML=dogSVG(FURS[st.fur][1],{acc:st.acc,mood:mood()});d.classList.toggle('sleeping',napping);
+  $('#petSay').textContent=sayLine();
+  $('#petMeters').innerHTML=METERS.map(m=>{const v=Math.round(p[m[0]]);return `<div class="mtr"><div class="row" style="justify-content:space-between"><span class="label">${m[1]}</span><span class="small" style="font-variant-numeric:tabular-nums">${v}%</span></div><div class="meter"><i class="${v<30?'low':''}" style="width:${v}%"></i></div></div>`;}).join('');
+  document.querySelectorAll('.act').forEach(b=>b.disabled=napping);
+}
+const HEART=`<svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z" fill="#ff5c8a"/></svg>`;
+const BUB=`<svg width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="rgba(120,190,255,.35)" stroke="#3a86ff" stroke-width="2"/><circle cx="9" cy="9" r="2" fill="#fff"/></svg>`;
+const BALL=`<svg width="36" height="36" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#ffcf33"/><path d="M8 12 Q20 22 32 12 M8 28 Q20 18 32 28" stroke="#c79500" stroke-width="2.5" fill="none"/></svg>`;
+function fx(html,n=1){const s=$('#petStage');for(let i=0;i<n;i++){const e=document.createElement('span');e.className='fx';e.innerHTML=html;
+  e.style.left=(28+Math.random()*44)+'%';e.style.top=(35+Math.random()*30)+'%';e.style.animationDelay=(i*.15)+'s';s.appendChild(e);setTimeout(()=>e.remove(),2000+i*150);}}
+function talk(m){petMsg=m;clearTimeout(talkT);talkT=setTimeout(()=>{petMsg=null;renderPet();},3000);}
+function hop(){const d=$('#petDog');d.classList.remove('bounce');void d.getBoundingClientRect();d.classList.add('bounce');}
+$('#petDog').addEventListener('click',()=>{
+  if(napping){talk("Shh... I'm napping!");renderPet();return;}
+  decay();st.pet.fun=clamp(st.pet.fun+6);st.pet.pets++;save('pet');fx(HEART,3);
+  talk(["That tickles!","More pets please!","You're my best friend!","*happy tail wag*","Belly rubs next?"][Math.floor(Math.random()*5)]);hop();renderPet();});
+document.querySelector('.actions').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b||napping)return;decay();const p=st.pet,a=b.dataset.act;
+  if(a==='feed'){if(p.food>92)talk("I'm full! Maybe later.");else{p.food=clamp(p.food+30);fx('Yum!');talk("Crunch crunch! Yummy!");hop();}}
+  if(a==='play'){if(p.energy<15)talk("Too sleepy to play. Nap time?");else{p.fun=clamp(p.fun+25);p.energy=clamp(p.energy-12);p.food=clamp(p.food-5);fx(BALL);bark();talk("Fetch! Again! Again!");hop();}}
+  if(a==='bath'){p.clean=100;fx(BUB,6);talk("Splish splash! Squeaky clean!");}
+  if(a==='nap'){napping=true;petMsg=null;const zi=setInterval(()=>fx('Z'),700);
+    setTimeout(()=>{clearInterval(zi);napping=false;st.pet.energy=clamp(st.pet.energy+45);save('pet');talk("I feel great! Let's go!");hop();renderPet();},4500);}
+  save('pet');renderPet();});
+setInterval(()=>{decay();save('pet');renderPet();},60000);
+
+/* ---------- hours ---------- */
+// Sunday..Saturday on a 24-hour clock. null = closed. Change these to update the hours.
+const HOURS=[null,[9,17],[9,17],[9,17],[9,17],[9,17],[9,17]];
+const DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const fmtH=h=>{const m=Math.round((h%1)*60);return `${Math.floor(h)%12||12}${m?':'+String(m).padStart(2,'0'):''} ${h>=12?'PM':'AM'}`;};
+function openStatus(){const d=new Date(),day=d.getDay(),h=d.getHours()+d.getMinutes()/60,r=HOURS[day];
+  if(r&&h>=r[0]&&h<r[1])return{open:true,text:`Open now · closes at ${fmtH(r[1])}`};
+  if(r&&h<r[0])return{open:false,text:`Closed · opens today at ${fmtH(r[0])}`};
+  for(let i=1;i<=7;i++){const nd=(day+i)%7;if(HOURS[nd])return{open:false,text:`Closed · opens ${i===1?'tomorrow':DAYS[nd]} at ${fmtH(HOURS[nd][0])}`};}
+  return{open:false,text:"Closed"};}
+function renderHours(){const s=openStatus();
+  ['#openPill','#openPill2'].forEach(q=>{const e=$(q);e.className='openpill '+(s.open?'open':'closed');e.textContent=s.text;});
+  const today=new Date().getDay();
+  $('#hoursList').innerHTML=[1,2,3,4,5,6,0].map(i=>`<div class="${i===today?'today':''}"><span>${DAYS[i]}${i===today?' (today)':''}</span><span class="${HOURS[i]?'':'shut'}">${HOURS[i]?fmtH(HOURS[i][0])+' – '+fmtH(HOURS[i][1]):'Closed'}</span></div>`).join('');}
+setInterval(renderHours,60000);
+
+/* ---------- running puppy ---------- */
+function renderRunner(){const f=FURS[st.fur][1],e=earOf(f),sk='stroke="#2a1d14" stroke-opacity=".25" stroke-width="1.5"';
+  $('#runner .flip').innerHTML=`<svg viewBox="0 0 80 50" aria-hidden="true">
+   <path class="tail" d="M18 24 Q8 18 11 7" stroke="${e}" stroke-width="5" fill="none" stroke-linecap="round"/>
+   <rect class="leg b" x="22" y="32" width="5" height="14" rx="2.5" fill="${e}"/><rect class="leg" x="48" y="32" width="5" height="14" rx="2.5" fill="${e}"/>
+   <ellipse cx="38" cy="28" rx="22" ry="11" fill="${f}" ${sk}/>
+   <rect class="leg" x="28" y="32" width="5" height="14" rx="2.5" fill="${f}" ${sk}/><rect class="leg b" x="54" y="32" width="5" height="14" rx="2.5" fill="${f}" ${sk}/>
+   <circle cx="62" cy="18" r="11" fill="${f}" ${sk}/><ellipse cx="72" cy="22" rx="7" ry="5" fill="${f}" ${sk}/>
+   <circle cx="78" cy="20" r="2.4" fill="#1b1410"/><circle cx="65" cy="15" r="1.8" fill="#1b1410"/>
+   <ellipse cx="57" cy="14" rx="4" ry="8" fill="${e}" transform="rotate(20 57 14)"/><path d="M70 26 q3 7 6 0" fill="#ff7a8a"/></svg>`;}
+const runner=$('#runner'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;let rx=12,dir=1,lastTs=0,rest=false;
+runner.hidden=!st.runner;if(RM)runner.classList.add('resting');
+function runStep(ts){const dt=lastTs?Math.min(50,ts-lastTs):0;lastTs=ts;
+  if(!rest&&!RM&&!runner.hidden){const max=Math.max(12,window.innerWidth-90);rx+=dir*dt*.09;if(rx>=max){rx=max;dir=-1;}if(rx<=12){rx=12;dir=1;}
+    if(Math.random()<.003){rest=true;runner.classList.add('resting');setTimeout(()=>{rest=false;runner.classList.remove('resting');if(Math.random()<.5)dir*=-1;},1500+Math.random()*2500);}}
+  runner.style.transform=`translateX(${rx}px)`;runner.querySelector('.flip').style.transform=dir<0?'scaleX(-1)':'none';requestAnimationFrame(runStep);}
+requestAnimationFrame(runStep);
+const WOOFS=["Woof!","Bark bark!","Let's play!","Treat please?","Arf!","I love you!"];
+let woofT;
+runner.addEventListener('click',()=>{bark();runner.classList.remove('jump');void runner.offsetWidth;runner.classList.add('jump');
+  const w=$('#woof');w.textContent=WOOFS[Math.floor(Math.random()*WOOFS.length)];w.hidden=false;clearTimeout(woofT);woofT=setTimeout(()=>w.hidden=true,1500);});
+
 /* init */
 $('#treatCount').textContent=st.treats;
-renderDog();renderSwatches();renderBreedBox();renderBreeds();renderTotd();renderTricks();renderStars();renderPhones();
+decay();
+renderDog();renderSwatches();renderAcc();renderBreedBox();renderBreeds();renderTotd();renderTricks();renderStars();renderPhones();renderPet();renderHours();renderRunner();
 })();
 </script>
 
